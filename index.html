@@ -1,0 +1,630 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Local Reef — a desktop for the apps you build on your own machine</title>
+<meta name="description" content="Local Reef gives your local apps names instead of ports. Click an icon, it opens. Open source, MIT, and looking for contributors.">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+
+<meta property="og:title" content="Local Reef">
+<meta property="og:description" content="An app is notes, not localhost:5173. A desktop for the apps you build on your own machine. Open source, MIT.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The Local Reef desktop: a painted coral reef with app icons floating along the bottom edge.">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&family=Golos+Text:wght@400..600&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ───────────────────────────────────────────────────────────────
+     The water column. One continuous descent behind everything:
+     sunlit shallows at the hero, abyssal blue by the time you reach
+     the contributing section. Light shafts and particulate live here
+     so no section has to carry its own atmosphere.
+     ─────────────────────────────────────────────────────────────── -->
+<div class="water" aria-hidden="true">
+  <div class="reefdrop"></div>
+  <div class="shafts">
+    <span style="--x:18%;--w:11vw;--tilt:-7deg;--o:.30"></span>
+    <span style="--x:37%;--w:5vw; --tilt:-4deg;--o:.22"></span>
+    <span style="--x:56%;--w:14vw;--tilt:-9deg;--o:.26"></span>
+    <span style="--x:79%;--w:7vw; --tilt:-3deg;--o:.18"></span>
+  </div>
+  <div class="snow"></div>
+</div>
+
+<!-- Four species, drawn once and reused. Each is picked for a
+     silhouette that survives being 20px wide and half transparent:
+     the copperband's disc and snout, the tang's wedge, the clownfish's
+     three bands, the anthias' fork. Colour is baked in rather than
+     inherited, because a monochrome fish at low opacity is a smudge. -->
+<svg class="sprites" aria-hidden="true" focusable="false">
+  <defs>
+    <clipPath id="cb-body" clipPathUnits="objectBoundingBox">
+      <path d="M.13.5C.2.24.33.09.5.07.71.05.84.24.87.5.84.76.71.95.5.93.33.91.2.76.13.5Z"/>
+    </clipPath>
+
+    <!-- Copperband butterflyfish -->
+    <symbol id="fish-butterfly" viewBox="0 0 150 118">
+      <g>
+        <path d="M46 12c14-13 44-14 60 1-14 3-38 4-60-1Z" fill="#f6d98c"/>
+        <path d="M48 106c14 13 44 13 60-1-14-3-38-3-60 1Z" fill="#f6d98c"/>
+        <path d="M118 59c9-6 21-16 30-30-2 15-6 24-11 30 5 6 9 15 11 30-9-14-21-24-30-30Z" fill="#f5c85c"/>
+        <path d="M20 59C29 30 45 13 66 11c26-3 46 17 52 48-6 31-26 51-52 48C45 105 29 88 20 59Z" fill="#fdf4e0"/>
+        <g clip-path="url(#cb-body)" transform="translate(20 11) scale(.653 .653)">
+          <g fill="#f19a3c" opacity=".92">
+            <path d="M62 -20c14 40 14 130 0 175h-26c14-45 14-135 0-175Z"/>
+            <path d="M104 -20c14 40 14 130 0 175H82c14-45 14-135 0-175Z"/>
+            <path d="M146 -14c12 38 12 122 0 162h-20c12-40 12-124 0-162Z"/>
+          </g>
+        </g>
+        <circle cx="103" cy="34" r="9" fill="#141c25"/>
+        <path d="M30 44c0 0 -12 8 -18 15 6 7 18 15 18 15Z" fill="#f6d98c" opacity=".8"/>
+        <path d="M34 36c-4 15-4 31 0 46-9-6-14-14-14-23s5-17 14-23Z" fill="#f5c85c" opacity=".55"/>
+        <circle cx="37" cy="52" r="6.5" fill="#fff"/>
+        <circle cx="36" cy="52" r="4.6" fill="#131b24"/>
+        <circle cx="34" cy="50" r="1.6" fill="#fff"/>
+      </g>
+    </symbol>
+
+    <!-- Regal tang -->
+    <symbol id="fish-tang" viewBox="0 0 150 100">
+      <path d="M116 50c9-6 20-15 29-27-2 13-5 21-9 27 4 6 7 14 9 27-9-12-20-21-29-27Z" fill="#f7c948"/>
+      <path d="M18 50C30 24 52 10 78 11c24 1 39 17 42 39-3 22-18 38-42 39C52 90 30 76 18 50Z" fill="#2f6fd0"/>
+      <path d="M52 21c26-9 52 0 62 18-8 22-30 36-58 40 16-16 12-44-4-58Z" fill="#101a2b" opacity=".78"/>
+      <path d="M116 26c4 8 5 16 4 24-1 8-3 15-7 22 8-8 12-16 12-23s-3-15-9-23Z" fill="#f7c948" opacity=".9"/>
+      <circle cx="35" cy="42" r="6" fill="#0d1420"/>
+      <circle cx="33" cy="40" r="1.9" fill="#fff" opacity=".9"/>
+    </symbol>
+
+    <!-- Clownfish -->
+    <symbol id="fish-clown" viewBox="0 0 150 92">
+      <path d="M112 46c10-5 22-13 32-24-2 13-5 20-9 24 4 4 7 11 9 24-10-11-22-19-32-24Z" fill="#f27430"/>
+      <path d="M16 46C30 24 52 12 76 13c22 1 36 14 42 33-6 19-20 32-42 33C52 80 30 68 16 46Z" fill="#f4813a"/>
+      <g fill="#fdf6ea">
+        <path d="M46 18c8 18 8 38 0 56l-9-4c7-16 7-32 0-48Z"/>
+        <path d="M79 15c9 19 9 41 0 62l-11-3c8-19 8-37 0-56Z"/>
+        <path d="M112 22c7 15 7 33 0 48l-8-4c6-13 6-27 0-40Z"/>
+      </g>
+      <g fill="#1b1109" opacity=".55">
+        <path d="M37 22c3 15 3 30 0 44l-4-2c3-13 3-27 0-40Z"/>
+        <path d="M68 18c3 19 3 39 0 58l-4-2c3-18 3-36 0-54Z"/>
+      </g>
+      <path d="M60 74c10 11 26 12 36 4-13 0-25-2-36-4Z" fill="#f27430"/>
+      <circle cx="33" cy="40" r="6.4" fill="#12100e"/>
+      <circle cx="31" cy="38" r="2" fill="#fff" opacity=".9"/>
+    </symbol>
+
+    <!-- Anthias -->
+    <symbol id="fish-anthias" viewBox="0 0 150 74">
+      <path d="M12 38C28 18 50 8 76 9c25 1 41 12 52 27-11 15-27 27-52 28-26 1-48-8-64-26Z" fill="#f2673f"/>
+      <path d="M40 12c22-5 46-2 62 12-14 8-38 12-70 12 4-9 8-18 8-24Z" fill="#f79a5c" opacity=".75"/>
+      <path d="M128 36c8-4 16-11 20-20 1 11 0 16-3 20 3 4 4 9 3 20-4-9-12-16-20-20Z" fill="#ef5f6a"/>
+      <circle cx="30" cy="33" r="5" fill="#161014"/>
+      <circle cx="28" cy="31" r="1.6" fill="#fff" opacity=".9"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="shoal" aria-hidden="true">
+  <svg class="fish" style="--y:58vh;--s:56px;--dur:74s;--delay:-9s;--op:.5"><use href="#fish-butterfly"/></svg>
+  <svg class="fish rev" style="--y:38vh;--s:30px;--dur:96s;--delay:-44s;--op:.42"><use href="#fish-anthias"/></svg>
+  <svg class="fish" style="--y:82vh;--s:24px;--dur:80s;--delay:-24s;--op:.38"><use href="#fish-anthias"/></svg>
+  <svg class="fish" style="--y:128vh;--s:44px;--dur:104s;--delay:-60s;--op:.5"><use href="#fish-tang"/></svg>
+  <svg class="fish rev" style="--y:172vh;--s:26px;--dur:86s;--delay:-13s;--op:.4"><use href="#fish-anthias"/></svg>
+  <svg class="fish" style="--y:218vh;--s:60px;--dur:118s;--delay:-74s;--op:.46"><use href="#fish-clown"/></svg>
+  <svg class="fish rev" style="--y:266vh;--s:34px;--dur:98s;--delay:-32s;--op:.44"><use href="#fish-tang"/></svg>
+  <svg class="fish" style="--y:322vh;--s:22px;--dur:84s;--delay:-54s;--op:.4"><use href="#fish-anthias"/></svg>
+  <svg class="fish rev" style="--y:378vh;--s:48px;--dur:112s;--delay:-20s;--op:.46"><use href="#fish-butterfly"/></svg>
+  <svg class="fish" style="--y:432vh;--s:28px;--dur:92s;--delay:-66s;--op:.38"><use href="#fish-clown"/></svg>
+</div>
+
+<!-- ───────────────────────────── nav ───────────────────────────── -->
+<header class="nav">
+  <a class="mark" href="#top">
+    <img src="assets/icon.svg" alt="" width="30" height="30">
+    <span>Local Reef</span>
+  </a>
+  <nav>
+    <a href="#how">How it works</a>
+    <a href="#notes">Field notes</a>
+    <a href="#contribute">Contribute</a>
+    <a class="ghost" href="https://github.com/etdebruin/localreef">GitHub</a>
+  </nav>
+</header>
+
+<!-- Depth gauge. Doubles as scroll position and section nav. -->
+<aside class="gauge" aria-label="Page sections">
+  <span class="gauge-read"><b id="depth">0</b>m</span>
+  <ol>
+    <li><a href="#top" data-zone="Surface"><i></i></a></li>
+    <li><a href="#problem" data-zone="The ports"><i></i></a></li>
+    <li><a href="#apps" data-zone="Apps"><i></i></a></li>
+    <li><a href="#how" data-zone="The gateway"><i></i></a></li>
+    <li><a href="#notes" data-zone="Field notes"><i></i></a></li>
+    <li><a href="#contribute" data-zone="Contribute"><i></i></a></li>
+  </ol>
+</aside>
+
+<main id="top">
+
+<!-- ───────────────────────────── hero ──────────────────────────── -->
+<section class="hero">
+  <div class="hero-copy">
+    <h1>
+      <span class="l1">An app is</span>
+      <span class="l2"><code>notes</code>.</span>
+      <span class="l3">Not <code class="dim">localhost:5173</code>.</span>
+    </h1>
+
+    <p class="lede">
+      Local Reef is a desktop for the small apps you build on your own machine.
+      Click an icon and the app opens in a window. The shell starts the server,
+      assigns the port and never mentions it again.
+    </p>
+
+    <div class="actions">
+      <a class="btn primary" href="https://github.com/etdebruin/localreef">
+        Read the source
+        <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path fill="currentColor" d="M1 8h11.5L8.7 4.2 9.8 3 15.5 8.7 9.8 14.4 8.7 13.2l3.8-3.8H1Z"/></svg>
+      </a>
+      <button class="btn copy" data-copy="git clone https://github.com/etdebruin/localreef && cd localreef && npm install && npm start">
+        <code>git clone …&nbsp;&&&nbsp;npm start</code>
+        <span class="copy-state">copy</span>
+      </button>
+    </div>
+
+    <p class="meta">
+      MIT licensed &middot; macOS today, Electron underneath &middot; 253 tests &middot;
+      early software built in the open
+    </p>
+  </div>
+
+  <figure class="plate hero-plate">
+    <div class="plate-frame">
+      <img src="assets/desktop.webp" width="2560" height="1640"
+           alt="The Local Reef desktop: a painted coral reef with a row of glass bubble icons floating along the bottom edge.">
+    </div>
+    <figcaption>
+      <b>Plate 01.</b> The canvas, three apps docked. Icons are bubbles tinted
+      from the app id, so a mixed set still reads as one family.
+    </figcaption>
+  </figure>
+</section>
+
+<!-- ─────────────────────────── the problem ─────────────────────── -->
+<section class="problem" id="problem">
+  <div class="wrap two">
+    <div>
+      <h2>Forty apps means forty islands.</h2>
+      <p>
+        People build a lot of small local things now. Each one is a folder that
+        needs a server started, a port remembered and a tab kept alive. The index
+        lives in your head, and it rots.
+      </p>
+      <p>
+        Local Reef's premise is that <b>the shell is the address bar</b>. Everything
+        in the architecture follows from making that true without the app having to
+        know or care.
+      </p>
+    </div>
+
+    <ul class="resolve" aria-label="Ports resolving to names">
+      <li><code class="from">localhost:5173</code><i></i><code class="to">notes</code></li>
+      <li><code class="from">localhost:3000</code><i></i><code class="to">clock</code></li>
+      <li><code class="from">localhost:8000</code><i></i><code class="to">underscore</code></li>
+      <li><code class="from">localhost:51823</code><i></i><code class="to">ledger</code></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ───────────────────────── how apps arrive ───────────────────── -->
+<section class="apps" id="apps">
+  <div class="wrap">
+    <h2 class="section-head">Three ways an app gets here.</h2>
+
+    <article class="specimen">
+      <div class="specimen-num">02</div>
+      <div class="specimen-body">
+        <h3>Drag in a project you already have.</h3>
+        <p>
+          Nothing is copied. The folder stays where it is, so editing it in your
+          editor edits what the desktop runs. Most projects need no configuration
+          at all. One that does, because its own entrypoint hardcodes a port,
+          needs three lines:
+        </p>
+        <pre><code><span class="p">{</span>
+  <span class="k">"name"</span>: <span class="s">"Underscore"</span>,
+  <span class="k">"type"</span>: <span class="s">"server"</span>,
+  <span class="k">"run"</span>: <span class="s">"uv run uvicorn app:create_app --port $PORT"</span>
+<span class="p">}</span></code></pre>
+        <p class="aside">
+          <code>run</code> is a shell command with <code>$PORT</code> expanded, so
+          any language works. Python, Go, a compiled binary. There is no Node
+          assumption anywhere in the runtime.
+        </p>
+      </div>
+    </article>
+
+    <article class="specimen flip">
+      <div class="specimen-num">03</div>
+      <div class="specimen-body">
+        <h3>Press ⌘K and describe one.</h3>
+        <p>
+          Claude writes the app through a toolset confined to a single folder.
+          Paths that try to escape it are refused, and a run that fails or is
+          declined removes the folder rather than leaving a broken icon behind.
+        </p>
+        <pre class="term"><code><span class="cmd">⌘K → "a pomodoro timer with session history"</span>
+
+  <span class="ok">✓</span> wrote index.html
+  <span class="ok">✓</span> wrote reef.json
+  <span class="ok">✓</span> Built pomodoro-timer-session      🍅 icon appears, opens</code></pre>
+        <p class="aside">
+          Roughly two minutes. Output is a single self-contained
+          <code>index.html</code> with no build step and no install, which is why
+          it opens the moment it exists.
+        </p>
+      </div>
+    </article>
+
+    <article class="specimen">
+      <div class="specimen-num">04</div>
+      <div class="specimen-body">
+        <h3>Drop a folder into <code>apps/</code>.</h3>
+        <p>
+          There is usually nothing to configure. An <code>index.html</code> and no
+          <code>package.json</code> is a static app, served straight off disk with
+          no process at all. A <code>package.json</code> carrying a
+          <code>dev</code> or <code>start</code> script is spawned and proxied.
+          A manifest exists only to override something.
+        </p>
+        <div class="infer">
+          <div><code>index.html</code><span>static, zero processes</span></div>
+          <div><code>package.json</code><span>spawned and proxied</span></div>
+          <div><code>reef.json</code><span>only to override</span></div>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ───────────────────────── the gateway ───────────────────────── -->
+<section class="how" id="how">
+  <div class="wrap">
+    <h2 class="section-head">One gateway, routed on hostname.</h2>
+    <p class="section-lede">
+      Every app sits behind a single loopback HTTP server. Static apps are served
+      off disk, server apps are proxied to the port their process actually took.
+      Same address either way, and the app folder still runs standalone outside
+      Local Reef.
+    </p>
+
+    <figure class="plate diagram-plate">
+      <div class="diagram-scroll">
+      <svg class="diagram" viewBox="0 14 976 268" role="img"
+           aria-label="Diagram: two app frames address notes.reef.localhost and clock.reef.localhost; both reach one gateway, which serves files from disk for the static app and proxies to a spawned process on an ephemeral port for the server app.">
+        <defs>
+          <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+            <path d="M0 0 10 5 0 10z" fill="currentColor"/>
+          </marker>
+        </defs>
+
+        <g class="d-frames">
+          <rect x="2" y="44" width="222" height="62" rx="14"/>
+          <text x="24" y="72">iframe</text>
+          <text x="24" y="92" class="mono hl">notes.reef.localhost</text>
+
+          <rect x="2" y="192" width="222" height="62" rx="14"/>
+          <text x="24" y="220">iframe</text>
+          <text x="24" y="240" class="mono hl">clock.reef.localhost</text>
+        </g>
+
+        <g class="d-links">
+          <path d="M232 75 H 350" marker-end="url(#arw)"/>
+          <path d="M232 223 H 350" marker-end="url(#arw)"/>
+          <text x="242" y="65" class="mono tiny">x-reef-token</text>
+          <text x="242" y="213" class="mono tiny">x-reef-token</text>
+        </g>
+
+        <g class="d-gate">
+          <rect x="358" y="30" width="242" height="238" rx="18"/>
+          <text x="380" y="62" class="ttl">Local Reef gateway</text>
+          <text x="380" y="82" class="mono tiny dim">127.0.0.1 : ephemeral</text>
+          <line x1="380" y1="100" x2="578" y2="100"/>
+          <text x="380" y="131">route on hostname</text>
+          <text x="380" y="159">strip the token</text>
+          <text x="380" y="187">serve, or proxy</text>
+          <text x="380" y="215">relay the upgrade</text>
+          <text x="380" y="247" class="mono tiny dim">one origin per app</text>
+        </g>
+
+        <g class="d-links">
+          <path d="M604 99 H 716" marker-end="url(#arw)"/>
+          <path d="M604 223 H 716" marker-end="url(#arw)"/>
+        </g>
+
+        <g class="d-out">
+          <rect x="724" y="68" width="250" height="62" rx="14"/>
+          <text x="746" y="96">files on disk</text>
+          <text x="746" y="116" class="mono tiny dim">no process, instant</text>
+
+          <rect x="724" y="192" width="250" height="62" rx="14"/>
+          <text x="746" y="220">spawned process</text>
+          <text x="746" y="240" class="mono tiny dim">127.0.0.1:51823 &nbsp;+ ws</text>
+        </g>
+      </svg>
+      </div>
+      <figcaption>
+        <b>Plate 05.</b> The port exists. It never surfaces.
+      </figcaption>
+    </figure>
+
+    <div class="grid-notes">
+      <div>
+        <h3>Not a custom protocol</h3>
+        <p>
+          <code>app://notes/</code> was the original design and it does not work.
+          Chromium custom schemes cannot carry a WebSocket, and a WebSocket is how
+          hot reload works. An HTTP server on <code>*.reef.localhost</code> keeps
+          HMR alive and buys per-app origins, so storage is partitioned by the
+          browser rather than by anything we wrote.
+        </p>
+      </div>
+      <div>
+        <h3>Secure context, no certificate</h3>
+        <p>
+          Chromium treats <code>.localhost</code> as trustworthy, so apps get
+          <code>crypto.subtle</code>, service workers and everything else gated on
+          HTTPS. Resolution is pinned with <code>host-resolver-rules</code> rather
+          than trusting the system resolver to honour RFC 6761.
+        </p>
+      </div>
+      <div>
+        <h3>A header, not a cookie</h3>
+        <p>
+          Any local process can forge a <code>Host</code> header, so requests carry
+          a per-launch token. It has to be a header: an app frame is cross-site
+          relative to the shell, and a <code>SameSite=Lax</code> cookie is stored
+          and then never sent back.
+        </p>
+      </div>
+    </div>
+
+    <figure class="plate">
+      <div class="plate-frame">
+        <img src="assets/window.webp" width="1800" height="1153" loading="lazy"
+             alt="A Clock app open in a Local Reef window over the reef wallpaper, showing live over websocket, through the gateway.">
+      </div>
+      <figcaption>
+        <b>Plate 06.</b> The clock sample hand-rolls a WebSocket on purpose, so the
+        proxy and the upgrade relay are provable with no <code>npm install</code>.
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ───────────────────────── field notes ───────────────────────── -->
+<section class="notes" id="notes">
+  <div class="wrap">
+    <h2 class="section-head">Field notes.</h2>
+    <p class="section-lede">
+      Things that only appear once you build the thing. They are written down in
+      <code>DESIGN.md</code> because several of these decisions exist purely
+      because the obvious approach was tried and did not survive.
+    </p>
+
+    <ol class="entries">
+      <li>
+        <span class="tag">resolver</span>
+        <h3>Servers may bind IPv6 loopback only.</h3>
+        <p>
+          <code>listen(port, 'localhost')</code> binds whichever family the resolver
+          returns first, and on modern macOS that is <code>::1</code>. Vite does
+          exactly this. Readiness probes both families, records which one answered,
+          and the gateway proxies to that host. Miss the last step and a perfectly
+          healthy app 502s.
+        </p>
+      </li>
+      <li>
+        <span class="tag">chrome match patterns</span>
+        <h3>A <code>*</code> scheme means http or https and nothing else.</h3>
+        <p>
+          So <code>*://*.reef.localhost/*</code> never matched a WebSocket
+          handshake. Every upgrade reached the gateway with no credential and was
+          destroyed. HMR was dead in the real app while the Vite test stayed green,
+          because that harness sets the header itself. A Node client is not a
+          browser.
+        </p>
+      </li>
+      <li>
+        <span class="tag">http</span>
+        <h3>Upgraded sockets escape <code>closeAllConnections()</code>.</h3>
+        <p>
+          After an upgrade Node detaches the socket from the server's tracked list,
+          but <code>getConnections()</code> still counts it, so
+          <code>server.close()</code> waits forever. The gateway tracks upgraded
+          sockets in its own set.
+        </p>
+      </li>
+      <li>
+        <span class="tag">macos</span>
+        <h3>A GUI launch inherits no shell environment.</h3>
+        <p>
+          No <code>PATH</code>, so <code>node</code> and <code>uv</code> are simply
+          missing, and no <code>ANTHROPIC_API_KEY</code> either. The supervisor
+          resolves <code>PATH</code> once from a login shell and caches it, and the
+          key gets a home in Settings. Both are consequences of the same fact.
+        </p>
+      </li>
+    </ol>
+
+    <blockquote class="pull">
+      <p>Assert the effect a user sees, not the mechanism you just wrote.</p>
+      <cite>
+        Minimize shipped broken because its test asserted <code>el.hidden === true</code>,
+        the state the code sets, while <code>display: flex</code> kept the window
+        fully on screen.
+      </cite>
+    </blockquote>
+  </div>
+</section>
+
+<!-- ───────────────────────── contribute ────────────────────────── -->
+<section class="contribute" id="contribute">
+  <div class="wrap">
+    <h2 class="section-head">Come and build on it.</h2>
+    <p class="section-lede">
+      Milestones one through four are done: registry, supervisor, gateway, canvas,
+      ⌘K generation and Fix with AI. What is left is written down honestly in
+      <code>TODO.md</code>, including the claims nobody has proven yet. That file
+      is the first place to look.
+    </p>
+
+    <div class="start">
+      <div class="start-run">
+        <h3>Running it takes two commands.</h3>
+        <pre><code><span class="c"># macOS, Node 20+</span>
+git clone https://github.com/etdebruin/localreef
+cd localreef && npm install
+npm start
+
+<span class="c"># then, before you open a pull request</span>
+npm test <span class="c">  # 253 unit and integration tests</span>
+npm run lint</code></pre>
+        <p class="aside">
+          Launch from a terminal if you want ⌘K to work. <code>npm start</code>
+          inherits the shell environment; the Dock does not.
+        </p>
+      </div>
+
+      <div class="start-rules">
+        <h3>Two things worth knowing first.</h3>
+        <p>
+          <b>Read <code>DESIGN.md</code> before touching the gateway, the
+          supervisor or the window model.</b> Several decisions in there look
+          arbitrary and are not.
+        </p>
+        <p>
+          <b>The Electron suites are not duplication.</b> They cover what the plain
+          suite structurally cannot. <code>npm test</code> sets the
+          <code>Cookie</code> header directly and bypasses browser policy, which is
+          exactly how a bug shipped where every app frame returned a 401. UI tests
+          drive real input events, because a programmatic click skips the pointer
+          sequence and passes happily while a button is broken.
+        </p>
+      </div>
+    </div>
+
+    <h3 class="want-head">Open, and genuinely wanted.</h3>
+    <ul class="wants">
+      <li>
+        <span class="lvl a">good first</span>
+        <h4><code>keepAlive</code> is parsed but not enforced.</h4>
+        <p>
+          Closing a window stops a server app immediately. The warm-hold TTL in the
+          manifest currently does nothing.
+        </p>
+      </li>
+      <li>
+        <span class="lvl a">good first</span>
+        <h4>Window layout is not persisted.</h4>
+        <p>
+          Position, size and minimized state are lost on relaunch, though the design
+          calls for storing them. Your desk should look the way you left it.
+        </p>
+      </li>
+      <li>
+        <span class="lvl b">meaty</span>
+        <h4>Apps are served without their own CSP.</h4>
+        <p>
+          The shell is locked down; the app frames are not, so a generated app can
+          still load remote code. Worth closing before generated apps become
+          routine.
+        </p>
+      </li>
+      <li>
+        <span class="lvl b">meaty</span>
+        <h4>No screenshot runs in CI.</h4>
+        <p>
+          <code>npm run shot</code> photographs the running app over the DevTools
+          protocol, and it has already caught two shipped bugs. Nothing runs it
+          automatically, so a visual regression still needs someone to remember.
+        </p>
+      </li>
+      <li>
+        <span class="lvl c">the big one</span>
+        <h4>The <code>reef.*</code> bridge.</h4>
+        <p>
+          <code>reef.storage</code>, <code>reef.window</code>, and the interesting
+          one, <code>reef.ai</code>: generated apps calling a model without the user
+          pasting a key into each app. Designed in DESIGN.md §7, no code yet.
+        </p>
+      </li>
+      <li>
+        <span class="lvl c">the big one</span>
+        <h4>Intents, and the shared store.</h4>
+        <p>
+          Apps declare what they handle. "Save this to my reading list" finds
+          whichever app claims <code>add:link</code>. This is the part a folder of
+          separate localhost apps can never replicate, and the long-term reason
+          this is a shell rather than a launcher.
+        </p>
+      </li>
+    </ul>
+
+    <ul class="ways">
+      <li><a href="https://github.com/etdebruin/localreef/issues">
+        <b>Open an issue</b>
+        <span>A bug report from a real machine is worth more than a patch.</span>
+      </a></li>
+      <li><a href="https://github.com/etdebruin/localreef/blob/main/DESIGN.md">
+        <b>DESIGN.md</b>
+        <span>Architecture, and the reasoning behind each decision.</span>
+      </a></li>
+      <li><a href="https://github.com/etdebruin/localreef/blob/main/MANIFEST.md">
+        <b>MANIFEST.md</b>
+        <span>The app format. Every field is optional.</span>
+      </a></li>
+      <li><a href="https://github.com/etdebruin/localreef/blob/main/TODO.md">
+        <b>TODO.md</b>
+        <span>The ledger, unverified claims first.</span>
+      </a></li>
+    </ul>
+  </div>
+</section>
+
+</main>
+
+<footer class="floor">
+  <div class="wrap">
+    <div class="floor-mark">
+      <img src="assets/icon.svg" alt="" width="52" height="52">
+      <div>
+        <b>Local Reef</b>
+        <span>A desktop for local apps. MIT licensed.</span>
+      </div>
+    </div>
+    <nav class="floor-links">
+      <a href="https://github.com/etdebruin/localreef">Source</a>
+      <a href="https://github.com/etdebruin/localreef/issues">Issues</a>
+      <a href="https://github.com/etdebruin/localreef/blob/main/DESIGN.md">Design</a>
+      <a href="https://github.com/etdebruin/localreef/blob/main/LICENSE">License</a>
+    </nav>
+    <p class="floor-note">
+      Built in the open by <a href="https://github.com/etdebruin">Etienne de Bruin</a>.
+      It works, and it is not yet polished in the places TODO.md says it isn't.
+    </p>
+  </div>
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>
