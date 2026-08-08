@@ -285,6 +285,35 @@ for (const vp of VIEWPORTS) {
   await evaluate(`scrollTo({ top: 0, behavior: 'instant' })`)
 }
 
+// Every sprite is drawn facing left (eye on the left, tail on the right), so a
+// fish whose transform drifts rightward must be mirrored (scaleX < 0) and one
+// drifting leftward must not. Sampled from the live matrix, not the keyframes:
+// three samples so one wrap-around jump can't fake a direction.
+console.log('\n  fish swim head-first')
+const backwards = await evaluate(`(async () => {
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms))
+  const read = () => [...document.querySelectorAll('.fish')].map((el) => {
+    const m = new DOMMatrixReadOnly(getComputedStyle(el).transform)
+    return { a: m.a, x: m.e }
+  })
+  const t0 = read(); await wait(400)
+  const t1 = read(); await wait(400)
+  const t2 = read()
+  return t0.map((s, i) => {
+    const deltas = [t1[i].x - s.x, t2[i].x - t1[i].x]
+      .filter((d) => Math.abs(d) > 0.5 && Math.abs(d) < innerWidth / 2)
+    if (!deltas.length) return 'fish ' + i + ' never moved'
+    const right = deltas[0] > 0
+    const mirrored = s.a < 0
+    if (right !== mirrored) {
+      return 'fish ' + i + ' swims ' + (right ? 'right' : 'left') + ' tail-first'
+    }
+    return null
+  }).filter(Boolean)
+})()`)
+if (!backwards.length) pass('every fish moves the way it faces')
+backwards.forEach(fail)
+
 // Reduced motion has to actually stop the animation, not merely declare it.
 await send('Emulation.setEmulatedMedia', {
   features: [{ name: 'prefers-reduced-motion', value: 'reduce' }],

@@ -177,16 +177,17 @@ a { color: inherit; }
   will-change: transform;
 }
 
+/* The sprites are drawn facing left, so the rightward lane mirrors them. */
 @keyframes swim {
-  0%   { transform: translate3d(-14vw, 0, 0) scaleX(1); }
-  48%  { transform: translate3d(52vw, -3.5vh, 0) scaleX(1); }
-  100% { transform: translate3d(118vw, 1.5vh, 0) scaleX(1); }
+  0%   { transform: translate3d(-14vw, 0, 0) scaleX(-1); }
+  48%  { transform: translate3d(52vw, -3.5vh, 0) scaleX(-1); }
+  100% { transform: translate3d(118vw, 1.5vh, 0) scaleX(-1); }
 }
 .fish.rev { animation-name: swim-rev; }
 @keyframes swim-rev {
-  0%   { transform: translate3d(118vw, 0, 0) scaleX(-1); }
-  48%  { transform: translate3d(46vw, 4vh, 0) scaleX(-1); }
-  100% { transform: translate3d(-16vw, -2vh, 0) scaleX(-1); }
+  0%   { transform: translate3d(118vw, 0, 0) scaleX(1); }
+  48%  { transform: translate3d(46vw, 4vh, 0) scaleX(1); }
+  100% { transform: translate3d(-16vw, -2vh, 0) scaleX(1); }
 }
 
 /* ──────────────────────────────── nav ───────────────────────────── */
