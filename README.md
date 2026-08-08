@@ -54,16 +54,17 @@ before making something look different.
 
 ## Deploying
 
-Static hosting, nothing to configure. On Vercel the project belongs to the
-`everydev` team:
+Live at <https://localreef-site.vercel.app>. Static hosting, nothing to
+configure. The Vercel project belongs to the `everydev` team, whose slug collides
+with the personal account name, so the scope has to be the team id:
 
 ```
 vercel --prod --scope team_5P1gL4XzJ3E7iCidCwdxfBIo
 ```
 
-**One thing to fix at deploy time:** `og:image` is a relative path. Several
-scrapers require an absolute URL, so once the domain is settled, change it to
-`https://<domain>/assets/og.jpg`.
+**`og:image` and `og:url` are absolute**, because several scrapers reject a
+relative path. They point at the `.vercel.app` alias, so both need updating when
+a real domain lands.
 
 ## Licence
 
