@@ -1,6 +1,6 @@
 # localreef.site
 
-The marketing site for [Local Reef](https://github.com/etdebruin/localreef), a
+The marketing site for [Local Reef](https://github.com/everydev1618/localreef), a
 desktop for the apps you build on your own machine.
 
 Three files and a folder of images. No framework, no build step, no install to
